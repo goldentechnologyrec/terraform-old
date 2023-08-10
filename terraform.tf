@@ -7,7 +7,7 @@ variable "region_aws" {
 variable "access_key_aws" {
   description = "access_key_aws"
   type        = string
-  //default     = "AKIAYBFAQKZOEOCJOBOM"
+  //default     = ""
   default = ""
 }
 
