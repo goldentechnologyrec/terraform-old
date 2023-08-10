@@ -1,47 +1,47 @@
 variable "region_aws" {
-    description = "Region AWS"
-    type        = string
-    default     = "eu-west-3"
+  description = "Region AWS"
+  type        = string
+  default     = "eu-west-3"
 }
 
 variable "access_key_aws" {
-    description = "access_key_aws"
-    type        = string
-    //default     = "AKIAYBFAQKZOEOCJOBOM"
-    default     = "AKIAYBFAQKZOOFQEY2NW"
+  description = "access_key_aws"
+  type        = string
+  //default     = "AKIAYBFAQKZOEOCJOBOM"
+  default = ""
 }
 
 variable "secret_key_aws" {
-    description = "secret_key_aws"
-    type        = string
-    default     = "uUCiYtkotAZDoepAdeAnzQdp/SiSutGKBqL/DtD3"
+  description = "secret_key_aws"
+  type        = string
+  default     = ""
 }
 
 variable "vpc_rec_name" {
-    description = "vpc_rec_name"
-    type        = string
-    default     = "recette"
+  description = "vpc_rec_name"
+  type        = string
+  default     = "recette"
 }
 
 variable "vpc_rec_cidr" {
-    description = "vpc_rec_cidr"
-    type        = string
-    default     = "10.0.0.0/16"
+  description = "vpc_rec_cidr"
+  type        = string
+  default     = "10.0.0.0/16"
 }
 
 variable "gateway_name" {
-    description = "gateway_name"
-    type        = string
-    default     = "gateway_recette"
+  description = "gateway_name"
+  type        = string
+  default     = "gateway_recette"
 }
 
 //Nombre subnet privee et public
 
 variable "subnet_count" {
-  type        = map (number)
+  type        = map(number)
   description = "Nombre subnet privee et public"
   default = {
-    public = 1,
+    public  = 1,
     private = 2
   }
 }
@@ -109,13 +109,14 @@ variable "settings" {
   default = {
     "database" = {
       allocated_storage   = 10            // storage in gigabytes
-      engine              = "postgres"       // engine type
-      engine_version      = "14"      // engine version
+      engine              = "postgres"    // engine type
+      engine_version      = "14"          // engine version
       instance_class      = "db.t3.micro" // rds instance type
       db_name             = "omega_db"    // database name
       skip_final_snapshot = true
-      db_username = "postgres"
-      db_password = "postgres"
+      db_username         = "postgres"
+      db_password         = "postgres"
+      port                = "5432"
     },
     "omega_backend" = {
       count         = 1          // the number of EC2 instances
@@ -129,3 +130,13 @@ variable "eip_name" {
   type        = string
   default     = "omega_eip_"
 }
+
+
+
+variable "rt_omega_backend" {
+  description = "toute table for omega backend"
+  type        = string
+  default     = "0.0.0.0/0"
+}
+
+
