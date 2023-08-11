@@ -208,7 +208,7 @@ resource "aws_instance" "omega_backend" {
 resource "aws_eip" "omega_eip" {
   count = "${var.settings.omega_backend.count}"
   instance = aws_instance.omega_backend[count.index].id
-  domain = "standard"
+  vpc = true
   tags = {
     Name = "${var.eip_name}${count.index}"
   }
