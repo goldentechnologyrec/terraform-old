@@ -88,7 +88,7 @@ resource "aws_route_table_association" "private" {
   subnet_id      = aws_subnet.omega_private_subnet[count.index].id
 }
 
-//Creation groupe securite EC2
+//Creation groupe securite EC2 backend
 
 resource "aws_security_group" "omega_web_sg" {
   name        = "omega_web_sg"
@@ -121,6 +121,42 @@ resource "aws_security_group" "omega_web_sg" {
 
   tags = {
     Name = "${var.sg_omega_name}"
+  }
+
+}
+//Creation groupe securite EC2 frontend
+
+resource "aws_security_group" "omega_frontend_sg" {
+  name        = "omega_frontend_sg"
+  description = "Groupe securite omega frontend"
+  vpc_id      = aws_vpc.vpc_rec.id
+
+  ingress {
+    description = "Allow all traffic through HTTP"
+    from_port   = "80"
+    to_port     = "80"
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  ingress {
+    description = "Allow SSH from my computer"
+    from_port   = "22"
+    to_port     = "22"
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  egress {
+    description = "Allow all outbound traffic"
+    from_port   = 0
+    to_port     = 0
+    protocol    = "-1"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  tags = {
+    Name = "${var.sg_omega_name_frontend}"
   }
 
 }
@@ -174,7 +210,7 @@ resource "aws_db_instance" "omega_database" {
   }
 }
 
-//Création key_pair
+//Création key_pair backend
 
 resource "tls_private_key" "priv_backend_key" {
   algorithm = "RSA"
@@ -186,6 +222,20 @@ resource "aws_key_pair" "priv_backend_key_pair" {
   public_key = tls_private_key.priv_backend_key.public_key_openssh
   provisioner "local-exec" {
     command = "echo '${tls_private_key.priv_backend_key.private_key_pem}' > /home/omega/omega_backend_key.pem"
+  }
+}
+//Création key_pair frontend
+
+resource "tls_private_key" "priv_frontend_key" {
+  algorithm = "RSA"
+  rsa_bits  = 4096
+}
+
+resource "aws_key_pair" "priv_frontend_key_pair" {
+  key_name   = "omega_front_end_key"
+  public_key = tls_private_key.priv_frontend_key.public_key_openssh
+  provisioner "local-exec" {
+    command = "echo '${tls_private_key.priv_frontend_key.private_key_pem}' > /home/omega/terraform/omega_backend_key.pem"
   }
 }
 
@@ -213,3 +263,27 @@ resource "aws_eip" "omega_eip" {
     Name = "${var.eip_name}${count.index}"
   }
 }
+//Création instace EC2 omega_frontend
+
+resource "aws_instance" "omega_frontend" {
+  ami                    = "ami-07e67bd6b5d9fd892"
+  count                  = var.settings.omega_frontend.count
+  instance_type          = var.settings.omega_frontend.instance_type
+  key_name               = aws_key_pair.priv_frontend_key_pair.key_name
+  subnet_id              = aws_subnet.omega_public_subnet[count.index].id
+  vpc_security_group_ids = [aws_security_group.omega_frontend_sg.id]
+  tags = {
+    Name = "omega_frontend"
+  }
+}
+//Reserver IP fixe frontend
+
+resource "aws_eip" "omega_eip_frontend" {
+  count    = var.settings.omega_frontend.count
+  instance = aws_instance.omega_frontend[count.index].id
+  vpc      = true
+  tags = {
+    Name = "${var.eip_name_frontend}${count.index}"
+  }
+}
+
