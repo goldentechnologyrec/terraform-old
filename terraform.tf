@@ -7,13 +7,13 @@ variable "region_aws" {
 variable "access_key_aws" {
     description = "access_key_aws"
     type        = string
-    default     = ""
+    default     = "AKIAYBFAQKZOEVMQYTEE"
 }
 
 variable "secret_key_aws" {
     description = "secret_key_aws"
     type        = string
-    default     = ""
+    default     = "gBwLK9Z9Aj9IC/pYZ2RFfKQlD5wEwFj2oYV8fKHt"
 }
 
 variable "vpc_rec_name" {
