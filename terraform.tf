@@ -131,12 +131,8 @@ variable "eip_name" {
   default     = "omega_eip_"
 }
 
-
-
 variable "rt_omega_backend" {
   description = "toute table for omega backend"
   type        = string
   default     = "0.0.0.0/0"
 }
-
-
