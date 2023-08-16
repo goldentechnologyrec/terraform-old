@@ -216,7 +216,7 @@ resource "aws_key_pair" "priv_backend_key_pair" {
   key_name   = "omega_back_end_key"
   public_key = tls_private_key.priv_backend_key.public_key_openssh
   provisioner "local-exec" {
-    command = "echo '${tls_private_key.priv_backend_key.private_key_pem}' > /home/omega/omega_backend_key.pem"
+    command = "echo '${tls_private_key.priv_backend_key.private_key_pem}' > /home/omega/terraform/omega_backend_key.pem"
   }
 }
 //Création key_pair frontend
@@ -230,7 +230,7 @@ resource "aws_key_pair" "priv_frontend_key_pair" {
   key_name   = "omega_front_end_key"
   public_key = tls_private_key.priv_frontend_key.public_key_openssh
   provisioner "local-exec" {
-    command = "echo '${tls_private_key.priv_frontend_key.private_key_pem}' > /home/omega/terraform/omega_backend_key.pem"
+    command = "echo '${tls_private_key.priv_frontend_key.private_key_pem}' > /home/omega/terraform/omega_frontend_key.pem"
   }
 }
 
