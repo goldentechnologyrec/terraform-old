@@ -90,27 +90,22 @@ resource "aws_route_table_association" "private" {
 
 //Creation groupe securite EC2 backend
 
-resource "aws_security_group" "omega_web_sg" {
-  name        = "omega_web_sg"
+resource "aws_security_group" "omega_backend_sg" {
+  name        = "omega_backend_sg"
   description = "Groupe securite omega"
   vpc_id      = aws_vpc.vpc_rec.id
 
-  ingress {
-    description = "Allow all traffic through HTTP"
-    from_port   = "80"
-    to_port     = "80"
-    protocol    = "tcp"
-    cidr_blocks = ["0.0.0.0/0"]
-  }
+  dynamic "ingress" {
+    for_each = var.settings_gr_ec2
 
-  ingress {
-    description = "Allow SSH from my computer"
-    from_port   = "22"
-    to_port     = "22"
-    protocol    = "tcp"
-    cidr_blocks = ["0.0.0.0/0"]
+    content {
+      description = ingress.value["des"]
+      from_port   = ingress.value["inport"]
+      to_port     = ingress.value["outport"]
+      protocol    = ingress.value["protocol"]
+      cidr_blocks = [ingress.value["cidr_blocks"]]
+    }
   }
-
   egress {
     description = "Allow all outbound traffic"
     from_port   = 0
@@ -120,7 +115,7 @@ resource "aws_security_group" "omega_web_sg" {
   }
 
   tags = {
-    Name = "${var.sg_omega_name}"
+    Name = "Omega Security Group"
   }
 
 }
@@ -173,7 +168,7 @@ resource "aws_security_group" "omega_db_sg" {
     from_port       = var.settings.database.port
     to_port         = var.settings.database.port
     protocol        = "tcp"
-    security_groups = [aws_security_group.omega_web_sg.id]
+    security_groups = [aws_security_group.omega_backend_sg.id]
   }
   tags = {
     Name = "${var.sg_omega_db_name}"
@@ -241,15 +236,15 @@ resource "aws_key_pair" "priv_frontend_key_pair" {
 
 //Création instace EC2 omega_backend
 
-resource "aws_instance" "omega_backend" {
+resource "aws_instance" "ec2_omega_backend" {
   ami                    = "ami-07e67bd6b5d9fd892"
   count                  = var.settings.omega_backend.count
   instance_type          = var.settings.omega_backend.instance_type
   key_name               = aws_key_pair.priv_backend_key_pair.key_name
   subnet_id              = aws_subnet.omega_public_subnet[count.index].id
-  vpc_security_group_ids = [aws_security_group.omega_web_sg.id]
+  vpc_security_group_ids = [aws_security_group.omega_backend_sg.id]
   tags = {
-    Name = "omega_backend"
+    Name = "ec2_omega_backend"
   }
 }
 
@@ -257,7 +252,7 @@ resource "aws_instance" "omega_backend" {
 
 resource "aws_eip" "omega_eip" {
   count    = var.settings.omega_backend.count
-  instance = aws_instance.omega_backend[count.index].id
+  instance = aws_instance.ec2_omega_backend[count.index].id
   vpc      = true
   tags = {
     Name = "${var.eip_name}${count.index}"

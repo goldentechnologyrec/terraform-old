@@ -84,16 +84,32 @@ variable "group_private_subnets_name" {
   default     = "omega_private_subnet_"
 }
 
-variable "sg_omega_name" {
-  description = "Nom securité groupe omega"
-  type        = string
-  default     = "sg_omega"
+variable "settings_gr_ec2" {
+  description = "Configuration settings de groupe Ec2"
+  type        = map(any)
+  default = {
+    ingress_1 = {
+      des          = "Allow all trafic through HTTP"
+      inport       = "80"
+      outport      = "80"
+      protocol     = "tcp"
+      cidr_blocks  = "0.0.0.0/0"
+    },
+    ingress_2 = {
+      des          = "Allow SSH from my computer"
+      inport       = "20"
+      outport      = "20"
+      protocol     = "tcp"
+      cidr_blocks  = "0.0.0.0/0"
+    }
+  }
 }
 variable "sg_omega_name_frontend" {
   description = "Nom securité groupe omega_frontend"
   type        = string
   default     = "sg_omega_frontend"
 }
+
 
 
 variable "sg_omega_db_name" {
