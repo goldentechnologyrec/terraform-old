@@ -89,6 +89,12 @@ variable "sg_omega_name" {
   type        = string
   default     = "sg_omega"
 }
+variable "sg_omega_name_frontend" {
+  description = "Nom securité groupe omega_frontend"
+  type        = string
+  default     = "sg_omega_frontend"
+}
+
 
 variable "sg_omega_db_name" {
   description = "Nom securité groupe omega db"
@@ -121,6 +127,10 @@ variable "settings" {
     "omega_backend" = {
       count         = 1          // the number of EC2 instances
       instance_type = "t2.micro" // the EC2 instance
+    },
+    "omega_frontend" = {
+      count         = 1          // the number of EC2 instances
+      instance_type = "t2.micro" // the EC2 instance
     }
   }
 }
@@ -129,6 +139,11 @@ variable "eip_name" {
   description = "Nom ip fixe"
   type        = string
   default     = "omega_eip_"
+}
+variable "eip_name_frontend" {
+  description = "Nom ip fixe"
+  type        = string
+  default     = "omega_eip_frontend"
 }
 
 variable "rt_omega_backend" {
