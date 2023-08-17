@@ -244,7 +244,7 @@ resource "aws_instance" "ec2_omega_backend" {
   subnet_id              = aws_subnet.omega_public_subnet[count.index].id
   vpc_security_group_ids = [aws_security_group.omega_backend_sg.id]
   tags = {
-    Name = "ec2_omega_backend"
+    Name = "omega_backend"
   }
 }
 
