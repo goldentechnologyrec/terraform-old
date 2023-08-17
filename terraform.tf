@@ -97,8 +97,8 @@ variable "settings_gr_ec2" {
     },
     ingress_2 = {
       des          = "Allow SSH from my computer"
-      inport       = "20"
-      outport      = "20"
+      inport       = "22"
+      outport      = "22"
       protocol     = "tcp"
       cidr_blocks  = "0.0.0.0/0"
     }
