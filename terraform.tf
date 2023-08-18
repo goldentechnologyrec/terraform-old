@@ -8,13 +8,13 @@ variable "access_key_aws" {
   description = "access_key_aws"
   type        = string
   //default     = ""
-  default = "AKIAYBFAQKZOD76P3ZOF"
+  default = ""
 }
 
 variable "secret_key_aws" {
   description = "secret_key_aws"
   type        = string
-  default     = "Hf/+F1BWZw5f8maVJnnTfBeNFxm3pBdnfi27WWf+"
+  default     = ""
 }
 
 variable "vpc_rec_name" {
