@@ -125,23 +125,18 @@ resource "aws_security_group" "omega_frontend_sg" {
   name        = "omega_frontend_sg"
   description = "Groupe securite omega frontend"
   vpc_id      = aws_vpc.vpc_rec.id
+  
+  dynamic "ingress" {
+    for_each = var.settings_gr_ec2
 
-  ingress {
-    description = "Allow all traffic through HTTP"
-    from_port   = "80"
-    to_port     = "80"
-    protocol    = "tcp"
-    cidr_blocks = ["0.0.0.0/0"]
+    content {
+      description = ingress.value["des"]
+      from_port   = ingress.value["inport"]
+      to_port     = ingress.value["outport"]
+      protocol    = ingress.value["protocol"]
+      cidr_blocks = [ingress.value["cidr_blocks"]]
+    }
   }
-
-  ingress {
-    description = "Allow SSH from my computer"
-    from_port   = "22"
-    to_port     = "22"
-    protocol    = "tcp"
-    cidr_blocks = ["0.0.0.0/0"]
-  }
-
   egress {
     description = "Allow all outbound traffic"
     from_port   = 0
@@ -149,6 +144,7 @@ resource "aws_security_group" "omega_frontend_sg" {
     protocol    = "-1"
     cidr_blocks = ["0.0.0.0/0"]
   }
+
 
   tags = {
     Name = "${var.sg_omega_name_frontend}"
