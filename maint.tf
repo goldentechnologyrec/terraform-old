@@ -95,17 +95,52 @@ resource "aws_security_group" "omega_backend_sg" {
   description = "Groupe securite omega"
   vpc_id      = aws_vpc.vpc_rec.id
 
-  dynamic "ingress" {
-    for_each = var.settings_gr_ec2
-
-    content {
-      description = ingress.value["des"]
-      from_port   = ingress.value["inport"]
-      to_port     = ingress.value["outport"]
-      protocol    = ingress.value["protocol"]
-      cidr_blocks = [ingress.value["cidr_blocks"]]
-    }
+  ingress {
+    description = "Allow all traffic through HTTP"
+    from_port   = 80
+    to_port     = 80
+    protocol    = "tcp"
+    cidr_blocks = var.allowed_cidr_blocks_http
   }
+  ingress {
+    description = "For Grafana"
+    from_port   = 3000
+    to_port     = 3000
+    protocol    = "tcp"
+    cidr_blocks = var.allowed_cidr_blocks_http
+  }
+
+  ingress {
+    description = "For prometheus"
+    from_port   = 9090
+    to_port     = 9090
+    protocol    = "tcp"
+    cidr_blocks = var.allowed_cidr_blocks_http
+  }
+
+  ingress {
+    description = "For Node-exporter"
+    from_port   = 9100
+    to_port     = 9100
+    protocol    = "tcp"
+    cidr_blocks = var.allowed_cidr_blocks_http
+  }
+  ingress {
+    description = "For Jenkins"
+    from_port   = 8080
+    to_port     = 8080
+    protocol    = "tcp"
+    cidr_blocks = var.allowed_cidr_blocks_http
+  }
+
+  ingress {
+    description = "Allow SSH from my computer"
+    from_port   = 22
+    to_port     = 22
+    protocol    = "tcp"
+    cidr_blocks = var.allowed_cidr_blocks_ssh
+  }
+
   egress {
     description = "Allow all outbound traffic"
     from_port   = 0
@@ -122,24 +157,32 @@ resource "aws_security_group" "omega_backend_sg" {
 //Creation groupe securite EC2 frontend
 
 resource "aws_security_group" "omega_frontend_sg" {
-  name        = "omega_frontend_sg"
+  name        = var.sg_omega_name_frontend
   description = "Groupe securite omega frontend"
   vpc_id      = aws_vpc.vpc_rec.id
 
   ingress {
     description = "Allow all traffic through HTTP"
-    from_port   = "80"
-    to_port     = "80"
+    from_port   = 80
+    to_port     = 80
     protocol    = "tcp"
-    cidr_blocks = ["0.0.0.0/0"]
+    cidr_blocks = var.allowed_cidr_blocks_http
+  }
+
+  ingress {
+    description = "For Tomacat"
+    from_port   = 8080
+    to_port     = 8080
+    protocol    = "tcp"
+    cidr_blocks = var.allowed_cidr_blocks_http
   }
 
   ingress {
     description = "Allow SSH from my computer"
-    from_port   = "22"
-    to_port     = "22"
+    from_port   = 22
+    to_port     = 22
     protocol    = "tcp"
-    cidr_blocks = ["0.0.0.0/0"]
+    cidr_blocks = var.allowed_cidr_blocks_ssh
   }
 
   egress {
@@ -151,10 +194,10 @@ resource "aws_security_group" "omega_frontend_sg" {
   }
 
   tags = {
-    Name = "${var.sg_omega_name_frontend}"
+    Name = var.sg_omega_name_frontend
   }
-
 }
+
 
 //Creation groupe securite RDS
 
@@ -216,7 +259,7 @@ resource "aws_key_pair" "priv_backend_key_pair" {
   key_name   = "omega_back_end_key"
   public_key = tls_private_key.priv_backend_key.public_key_openssh
   provisioner "local-exec" {
-    command = "echo '${tls_private_key.priv_backend_key.private_key_pem}' > /home/ec2-user/terraform/omega_backend_key.pem"
+    command = "echo '${tls_private_key.priv_backend_key.private_key_pem}' > /home/adm1/terraform/omega_backend_key.pem"
   }
 }
 //Création key_pair frontend
@@ -230,7 +273,7 @@ resource "aws_key_pair" "priv_frontend_key_pair" {
   key_name   = "omega_front_end_key"
   public_key = tls_private_key.priv_frontend_key.public_key_openssh
   provisioner "local-exec" {
-    command = "echo '${tls_private_key.priv_frontend_key.private_key_pem}' > /home/ec2-user/terraform/omega_frontend_key.pem"
+    command = "echo '${tls_private_key.priv_frontend_key.private_key_pem}' > /home/adm1/terraform/omega_frontend_key.pem"
   }
 }
 
@@ -281,4 +324,33 @@ resource "aws_eip" "omega_eip_frontend" {
     Name = "${var.eip_name_frontend}${count.index}"
   }
 }
+# Définition des volumes EBS
+resource "aws_ebs_volume" "volume1" {
+  availability_zone = "eu-west-3a" # 
+  size             = 5
+  tags = {
+    Name = "Volume 1 (frontend)"
+  }
+}
+
+resource "aws_ebs_volume" "volume2" {
+  availability_zone = "eu-west-3a" # 
+  size             = 5
+  tags = {
+    Name = "Volume 2 (backend)"
+  }
+}
+# Attacher les volumes aux instances
+resource "aws_volume_attachment" "attachment_frontend" {
+  device_name = "/dev/xvdb" 
+  instance_id = "i-085aebca033937b79"
+  volume_id   = "vol-09bf380fccf84ccff"
+}
+
+resource "aws_volume_attachment" "attachment_backend" {
+  device_name = "/dev/xvdc" 
+  instance_id = "i-0955171101d3a48ec"
+  volume_id   = "vol-0d0ba66d75bff41a5"
+}
+
 

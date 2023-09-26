@@ -84,30 +84,44 @@ variable "group_private_subnets_name" {
   default     = "omega_private_subnet_"
 }
 
-variable "settings_gr_ec2" {
-  description = "Configuration settings de groupe Ec2"
-  type        = map(any)
-  default = {
-    ingress_1 = {
-      des          = "Allow all trafic through HTTP"
-      inport       = "80"
-      outport      = "80"
-      protocol     = "tcp"
-      cidr_blocks  = "0.0.0.0/0"
-    },
-    ingress_2 = {
-      des          = "Allow SSH from my computer"
-      inport       = "22"
-      outport      = "22"
-      protocol     = "tcp"
-      cidr_blocks  = "0.0.0.0/0"
-    }
-  }
-}
 variable "sg_omega_name_frontend" {
-  description = "Nom securité groupe omega_frontend"
+  description = "Nom du groupe de sécurité Omega Frontend"
   type        = string
-  default     = "sg_omega_frontend"
+  default     = "omega_frontend_sg"
+}
+
+variable "allowed_cidr_blocks_http" {
+  description = "Liste des plages CIDR autorisées pour le trafic HTTP"
+  type        = list(string)
+  default     = [
+    "88.174.68.140/32",
+    "88.170.226.46/32",
+    "146.70.40.18/32",
+    "88.171.254.18/32",
+    "88.173.182.55/32",
+    "37.165.144.18/32",
+    "37.167.215.179/32",
+    "77.136.66.187/32",
+    "176.186.174.227/32",
+    "88.160.67.59/32"
+  ]
+}
+
+variable "allowed_cidr_blocks_ssh" {
+  description = "Liste des plages CIDR autorisées pour le trafic SSH"
+  type        = list(string)
+  default     = [
+    "88.174.68.140/32",
+    "88.170.226.46/32",
+    "146.70.40.18/32",
+    "88.171.254.18/32",
+    "88.173.182.55/32",
+    "37.165.144.18/32",
+    "37.167.215.179/32",
+    "77.136.66.187/32",
+    "176.186.174.227/32",
+    "88.160.67.59/32"
+  ]
 }
 
 
