@@ -117,6 +117,14 @@ resource "aws_security_group" "omega_backend_sg" {
     protocol    = "tcp"
     cidr_blocks = var.allowed_cidr_blocks_http
   }
+  ingress {
+    description = "For prometheus"
+    from_port   = 9091
+    to_port     = 9091
+    protocol    = "tcp"
+    cidr_blocks = var.allowed_cidr_blocks_http
+  }
+
 
   ingress {
     description = "For Node-exporter"
@@ -132,6 +140,14 @@ resource "aws_security_group" "omega_backend_sg" {
     protocol    = "tcp"
     cidr_blocks = var.allowed_cidr_blocks_http
   }
+  ingress {
+    description = "for tomcat"
+    from_port   = 8081
+    to_port     = 8081
+    protocol    = "tcp"
+    cidr_blocks = var.allowed_cidr_blocks_http
+  }
+
 
   ingress {
     description = "Allow SSH from my computer"
@@ -340,17 +356,17 @@ resource "aws_ebs_volume" "volume2" {
     Name = "Volume 2 (backend)"
   }
 }
+
 # Attacher les volumes aux instances
 resource "aws_volume_attachment" "attachment_frontend" {
-  device_name = "/dev/xvdb" 
-  instance_id = "i-085aebca033937b79"
-  volume_id   = "vol-09bf380fccf84ccff"
+  device_name = "/dev/xvdb"
+  instance_id = "i-0d3f835abe685110d"
+  volume_id   = "vol-0ce7763981899146e"
 }
 
 resource "aws_volume_attachment" "attachment_backend" {
-  device_name = "/dev/xvdc" 
-  instance_id = "i-0955171101d3a48ec"
-  volume_id   = "vol-0d0ba66d75bff41a5"
+  device_name = "/dev/xvdc"
+  instance_id = "i-059445e0f42791b22"
+  volume_id   = "vol-0c08afa0eb1edf67d"
 }
-
 

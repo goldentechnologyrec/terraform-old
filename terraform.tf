@@ -8,13 +8,13 @@ variable "access_key_aws" {
   description = "access_key_aws"
   type        = string
   //default     = ""
-  default = ""
+  default = "AKIAYBFAQKZOPN6UTREX"
 }
 
 variable "secret_key_aws" {
   description = "secret_key_aws"
   type        = string
-  default     = ""
+  default     = "WQaicdDPoPINyKeuK+uh62WusHXkVj1hyHHfRfSN"
 }
 
 variable "vpc_rec_name" {
@@ -102,7 +102,7 @@ variable "allowed_cidr_blocks_http" {
     "37.165.144.18/32",
     "37.167.215.179/32",
     "77.136.66.187/32",
-    "176.186.174.227/32",
+    "88.168.83.128/32",
     "88.160.67.59/32"
   ]
 }
@@ -119,7 +119,7 @@ variable "allowed_cidr_blocks_ssh" {
     "37.165.144.18/32",
     "37.167.215.179/32",
     "77.136.66.187/32",
-    "176.186.174.227/32",
+    "88.168.83.128/32",
     "88.160.67.59/32"
   ]
 }
