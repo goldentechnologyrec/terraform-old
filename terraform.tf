@@ -7,14 +7,14 @@ variable "region_aws" {
 variable "access_key_aws" {
   description = "access_key_aws"
   type        = string
-  //default     = ""
+  //default = ""
   default = ""
 }
 
 variable "secret_key_aws" {
   description = "secret_key_aws"
   type        = string
-  default     = ""
+  default = ""
 }
 
 variable "vpc_rec_name" {
@@ -117,10 +117,12 @@ variable "allowed_cidr_blocks_ssh" {
     "88.171.254.18/32",
     "88.173.182.55/32",
     "37.165.144.18/32",
-    "37.167.215.179/32",
     "77.136.66.187/32",
     "88.168.83.128/32",
-    "88.160.67.59/32"
+    "88.160.67.59/32",
+    "13.39.198.209/32",
+    "176.186.174.227/32",
+    "81.65.115.192/32"
   ]
 }
 
